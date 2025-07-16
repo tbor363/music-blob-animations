@@ -1,5 +1,5 @@
 function initBuffers(gl, latitudeBands = 30, longitudeBands = 30, radius = 1) {
-  const { position: positionBuffer, indices: indexBuffer, vertexCount: count, indicesCount: iCount, color: colorBuffer, normal: normalBuffer, originalPositions: positions, originalIndices: indices} = initAllBuffers(gl, latitudeBands, longitudeBands, radius);
+  const { position: positionBuffer, indices: indexBuffer, vertexCount: count, indicesCount: iCount, color: colorBuffer, normal: normalBuffer, originalPositions: positions, originalIndices: indices, normals: normals} = initAllBuffers(gl, latitudeBands, longitudeBands, radius);
   // const colorBuffer = initColorBuffer(gl, positionBuffer, radius);
   // const normalBuffer = initNormalBuffer(gl);
   return {
@@ -11,6 +11,7 @@ function initBuffers(gl, latitudeBands = 30, longitudeBands = 30, radius = 1) {
     normal: normalBuffer,
     originalPositions: positions,
     originalIndices: indices,
+    normals: normals,
   };
 }
 
@@ -89,6 +90,7 @@ function initAllBuffers(gl, latitudeBands, longitudeBands, radius) {
     normal: normalBuffer,
     originalPositions: positions,
     originalIndices: indices,
+    normals: normals,
   };
 }
 

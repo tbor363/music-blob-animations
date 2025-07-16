@@ -1,3 +1,5 @@
+import { drawScene } from "./draw-scene.js";
+
 function createBlob(latitudeBands, longitudeBands, positions, stiffness) {
   const nodes = createNodes(positions);
   const springs = createSprings(latitudeBands, longitudeBands, nodes, stiffness);
@@ -125,4 +127,98 @@ class Spring {
   }
 }
 
-export { Node, Spring, createBlob };
+// function applyForce(nodes, forceVector, node) {
+//   nodes[node].applyForce(forceVector[0], forceVector[1], forceVector[2]);
+// }
+
+function applyForce(nodes, springs, deltaTime, mass, damping, normals, impulseStrength, node) {
+  // const node = Math.floor(Math.random() * nodes.length);
+  
+  // Apply spring forces
+  for (let spring of springs) {
+    spring.applyForce();
+  }
+  // apply a force 
+  const normal = [normals[node * 3], normals[node * 3 + 1], normals[node * 3 + 2]];
+  const forceVector = [normal[0] * impulseStrength, normal[1] * impulseStrength, normal[2] * impulseStrength];
+  nodes[node].applyForce(forceVector[0], forceVector[1], forceVector[2]);
+  // applyForce(nodes, forceVector, node); 
+
+  // Integrate all nodes
+  for (let node of nodes) {
+      node.integrate(deltaTime, mass, damping);
+  }
+}
+
+function animateStep(blobInfo, buffers, gl, programInfo, node, forceMag) {
+  const dt = 0.016; // 60 FPS
+  const mass = 1.0; // mass of each node
+  applyForce(blobInfo.nodes, blobInfo.springs, dt, mass, blobInfo.damping, blobInfo.normals, forceMag, node);
+  updatePositionBuffer(gl, buffers, blobInfo.nodes);
+  const updatedNormals = updateNormals(gl, buffers, blobInfo.nodes);
+  const {modelViewMatrix, projectionMatrix, normalMatrix} = drawScene(gl, programInfo, buffers);
+  // updateNormalLines(gl, debugBuffers, blobInfo.nodes, updatedNormals);
+}
+
+function updatePositionBuffer(gl, buffers, nodes) {
+
+  const updatePositions = [];
+
+  for (let node of nodes) {
+    updatePositions.push(...node.position);
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+  const positions = new Float32Array(updatePositions);
+  gl.bufferData(gl.ARRAY_BUFFER, positions, gl.DYNAMIC_DRAW);
+  
+}
+
+function updateNormals(gl, buffers, nodes) {
+  const vertexNormals = Array(nodes.length).fill().map(() => [0, 0, 0]);
+  for (let i = 0; i < buffers.indicesCount; i += 3) {
+    const ia = buffers.originalIndices[i];
+    const ib = buffers.originalIndices[i + 1];
+    const ic = buffers.originalIndices[i + 2];
+
+    const a = nodes[ia].position;
+    const b = nodes[ib].position;
+    const c = nodes[ic].position;
+
+    const e1 = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+    const e2 = [b[0] - a[0], b[1] - a[1], b[2] - a[2]]; 
+
+    const no = [
+      e1[1] * e2[2] - e1[2] * e2[1],
+      e1[2] * e2[0] - e1[0] * e2[2],
+      e1[0] * e2[1] - e1[1] * e2[0]
+    ];
+
+    // console.log("Triangle normal:", no);
+
+    for (let d = 0; d < 3; d++) {
+      vertexNormals[ia][d] += no[d];
+      vertexNormals[ib][d] += no[d];
+      vertexNormals[ic][d] += no[d];
+    }
+  }
+
+  // Normalize
+  const flatNormals = [];
+  for (let i = 0; i < vertexNormals.length; i++) {
+    const n = vertexNormals[i];
+    const len = Math.sqrt(n[0]**2 + n[1]**2 + n[2]**2);
+    if (len > 0) {
+      flatNormals.push(n[0]/len, n[1]/len, n[2]/len);
+    } else {
+      flatNormals.push(0, 0, 0);
+    }
+  }
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.normal);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(flatNormals), gl.DYNAMIC_DRAW);
+
+  return vertexNormals;
+}
+
+
+export { Node, Spring, createBlob, animateStep };
