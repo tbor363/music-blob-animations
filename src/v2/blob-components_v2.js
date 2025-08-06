@@ -1,4 +1,4 @@
-import { drawScene } from "./draw-scene.js";
+import { drawScene } from "./draw-scene_v2.js";
 
 function createBlob(latitudeBands, longitudeBands, positions, stiffness) {
   const nodes = createNodes(positions);

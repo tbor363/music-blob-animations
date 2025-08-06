@@ -1,4 +1,4 @@
-import { animateStep } from "./blob-components.js";
+import { animateStep } from "./blob-components_v2.js";
 
 let isAnalyzing = false;
 let beats = 0;

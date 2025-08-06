@@ -100,22 +100,22 @@ function setNormalAttribute(gl, buffers, programInfo) {
   gl.enableVertexAttribArray(programInfo.attribLocations.vertexNormal);
 }
 
-function drawNormals(gl, debugBuffers, programInfo, modelViewMatrix, projectionMatrix) {
-  gl.useProgram(programInfo.program);
+// function drawNormals(gl, debugBuffers, programInfo, modelViewMatrix, projectionMatrix) {
+//   gl.useProgram(programInfo.program);
 
-  const positionAttrib = programInfo.attribLocations.vertexPosition;
+//   const positionAttrib = programInfo.attribLocations.vertexPosition;
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, debugBuffers.normalLines);
-  gl.vertexAttribPointer(positionAttrib, 3, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(positionAttrib);
+//   gl.bindBuffer(gl.ARRAY_BUFFER, debugBuffers.normalLines);
+//   gl.vertexAttribPointer(positionAttrib, 3, gl.FLOAT, false, 0, 0);
+//   gl.enableVertexAttribArray(positionAttrib);
 
-  gl.disableVertexAttribArray(programInfo.attribLocations.vertexNormal);
-  gl.disableVertexAttribArray(programInfo.attribLocations.vertexColor);
+//   gl.disableVertexAttribArray(programInfo.attribLocations.vertexNormal);
+//   gl.disableVertexAttribArray(programInfo.attribLocations.vertexColor);
 
-  gl.uniformMatrix4fv(programInfo.uniformLocations.projectionMatrix, false, projectionMatrix);
-  gl.uniformMatrix4fv(programInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix);
+//   gl.uniformMatrix4fv(programInfo.uniformLocations.projectionMatrix, false, projectionMatrix);
+//   gl.uniformMatrix4fv(programInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix);
 
-  gl.drawArrays(gl.LINES, 0, debugBuffers.lineCount);
-}
+//   gl.drawArrays(gl.LINES, 0, debugBuffers.lineCount);
+// }
 
 export { drawScene, drawNormals };

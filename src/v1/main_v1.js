@@ -1,7 +1,7 @@
-import { initBuffers, initDebugBuffers } from "./init-buffers.js";
-import { drawScene, drawNormals } from "./draw-scene.js";
-import { Node, Spring, createBlob, animateStep } from "./blob-components.js";
-import { setupAudio } from "./audio.js";
+import { initBuffers, initDebugBuffers } from "./init-buffers_v1.js";
+import { drawScene, drawNormals } from "../draw-scene.js";
+import { Node, Spring, createBlob, animateStep } from "./blob-components_v1.js";
+import { setupAudio } from "../audio.js";
 
 
 const canvas = document.querySelector("#gl-canvas");
